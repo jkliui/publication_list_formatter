@@ -3,7 +3,7 @@ from docx import Document
 from docx.shared import Inches, Pt
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 
-# 要加粗下划线的作者字符串（精准匹配）
+# target author
 target_author = "Xxx, X"
 
 def format_authors(authors_str):
@@ -19,35 +19,35 @@ def format_authors(authors_str):
             formatted.append(author.strip())  # fallback
     return '; '.join(formatted)
 
-# 读取 CSV 文件
+# load csv file
 df = pd.read_csv("publication_list.csv")
 
-# 替换 NaN 为 '' 并类型转换
+# replace NaN to '' and change types
 df.fillna('', inplace=True)
 df['Volume'] = pd.to_numeric(df['Volume'], errors='coerce').fillna(0).astype(int)
 df['Year'] = pd.to_numeric(df['Year'], errors='coerce').fillna(0).astype(int)
 df = df.astype({col: str for col in df.columns if col not in ['Volume', 'Year']})
 
-# 格式化作者名
+# format authors
 df['Formatted Authors'] = df['Authors'].apply(format_authors)
 
-# 提取字段并排序（按照年份降序）
+# extract information and sort with year in descending order
 df_selected = df[['Formatted Authors', 'Title', 'Publication', 'Year', 'Volume', 'Pages']]
 df_selected = df_selected.sort_values(by='Year', ascending=False).reset_index(drop=True)
 
-# 创建 Word 文档
+# creat word
 doc = Document()
 
-# 设置默认字体样式
+# font style
 style = doc.styles['Normal']
 font = style.font
 font.name = 'Times New Roman'
 font.size = Pt(12)
 
-# 总文章数
+# total publication number
 total = len(df_selected)
 
-# 遍历每一篇文章
+# iterate each publication
 for _, row in df_selected.iterrows():
     author = row['Formatted Authors']
     title = row['Title']
@@ -56,7 +56,7 @@ for _, row in df_selected.iterrows():
     volume = row['Volume']
     pages = row['Pages']
 
-    # 添加段落并设置格式
+    # add paragraph and format
     paragraph = doc.add_paragraph()
     paragraph.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
     paragraph.paragraph_format.line_spacing = 1.0
@@ -64,10 +64,10 @@ for _, row in df_selected.iterrows():
     paragraph.paragraph_format.left_indent = Inches(0)
     paragraph.paragraph_format.first_line_indent = Inches(-0.3)
 
-    # 写入编号
+    # write order number
     paragraph.add_run(f"{total})  ")
 
-    # 写入作者（处理 target_author 是否存在）
+    # write in authors
     if target_author in author:
         parts = author.split(target_author)
         for i, part in enumerate(parts):
@@ -80,7 +80,7 @@ for _, row in df_selected.iterrows():
     else:
         paragraph.add_run(author)
 
-    paragraph.add_run(" ")  # 加空格
+    paragraph.add_run(" ")  # add space
 
     # Title
     paragraph.add_run(f"{title}. ")
@@ -101,6 +101,6 @@ for _, row in df_selected.iterrows():
 
     total -= 1
 
-# 保存文档
+# save word
 doc.save("highlighted_publications.docx")
-print("处理完成：highlighted_publications.docx ✅")
+print("Task completed：highlighted_publications.docx")
