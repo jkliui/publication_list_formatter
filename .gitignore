@@ -9,5 +9,6 @@ __pycache__/
 *.pptx
 *.pdf
 .vscode/
+*.env
 env/
 venv/
