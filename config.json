@@ -1,0 +1,21 @@
+{
+    "document_settings": {
+        "default_font_name": "Cambria",
+        "default_font_size_pt": 11
+    },
+    "paragraph_formats": {
+        "alignment": "left",
+        "line_spacing_pt": 1.0,
+        "space_after_pt": 6,
+        "left_indent_inches": 0,
+        "first_line_indent_inches": -0.3
+    },
+    "text_styles": {
+        "journal_italic": true,
+        "year_bold": true,
+        "volume_italic": true,
+        "target_author_bold": true,
+        "target_author_underline": true
+    },
+    "target_author": "Xxx, X."
+}
